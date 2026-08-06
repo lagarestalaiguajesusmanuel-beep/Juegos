@@ -1,232 +1,517 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<title>Sopa de Letras - Bases de Datos</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sopa de Letras - Internet y Redes</title>
 
 <style>
+
+/* =========================================================
+   CONFIGURACIÓN GENERAL
+========================================================= */
 
 *{
 box-sizing:border-box;
 margin:0;
 padding:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 }
 
-/* FONDO CON TRANSICIÓN SUAVE */
-
 body{
+
 height:100vh;
+
 overflow:hidden;
+
 display:flex;
+
 flex-direction:column;
+
 align-items:center;
+
 justify-content:center;
+
 color:white;
-background:linear-gradient(45deg,#2563eb,#7c3aed,#db2777,#f59e0b,#22c55e);
+
+background:
+linear-gradient(
+45deg,
+#2563eb,
+#7c3aed,
+#db2777,
+#f59e0b,
+#22c55e
+);
+
 background-size:600% 600%;
+
 animation:fondo 18s ease infinite;
 
 user-select:none;
 
 }
 
+/* =========================================================
+   FONDO
+========================================================= */
+
 @keyframes fondo{
 
-0%{background-position:0% 50%}
-25%{background-position:50% 100%}
-50%{background-position:100% 50%}
-75%{background-position:50% 0%}
-100%{background-position:0% 50%}
+0%{
+background-position:0% 50%;
+}
+
+25%{
+background-position:50% 100%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+75%{
+background-position:50% 0%;
+}
+
+100%{
+background-position:0% 50%;
+}
 
 }
 
-/* BURBUJAS */
+/* =========================================================
+   BURBUJAS
+========================================================= */
 
 #bubbles{
+
 position:fixed;
+
 top:0;
 left:0;
+
 width:100%;
 height:100%;
+
 z-index:-1;
+
 }
 
-/* TITULO */
+/* =========================================================
+   TÍTULO
+========================================================= */
 
 h1{
+
 margin-bottom:5px;
+
+font-size:32px;
+
+text-shadow:
+2px 2px 5px rgba(0,0,0,.3);
+
 }
 
 #timer{
+
 font-size:20px;
-margin-bottom:10px;
+
+margin-bottom:12px;
+
+font-weight:bold;
+
 }
 
-/* CONTENEDOR */
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
 
 .container{
+
 display:flex;
+
 gap:30px;
+
+align-items:flex-start;
+
 }
 
-/* GRID */
+/* =========================================================
+   GRID
+========================================================= */
 
 #grid{
+
 display:grid;
+
 grid-template-columns:repeat(20,32px);
+
 gap:3px;
+
 background:rgba(0,0,0,0.25);
+
 padding:10px;
+
 border-radius:10px;
+
 backdrop-filter:blur(6px);
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.2);
+
 }
 
+/* =========================================================
+   CELDAS
+========================================================= */
+
 .cell{
+
 width:32px;
+
 height:32px;
+
 display:flex;
+
 align-items:center;
+
 justify-content:center;
+
 background:rgba(255,255,255,0.15);
+
 border-radius:4px;
+
 cursor:pointer;
+
 font-weight:bold;
-transition:0.15s;
+
+font-size:16px;
+
+transition:
+background .15s,
+transform .15s;
+
+touch-action:none;
+
 }
 
 .cell:hover{
+
 background:rgba(255,255,255,0.35);
+
 }
 
 .selected{
-background:#facc15;
+
+background:#facc15 !important;
+
 color:black;
-transform:scale(1.1);
+
+transform:scale(1.08);
+
+z-index:2;
+
 }
 
 .found{
+
 color:white;
+
+font-weight:bold;
+
 }
 
-/* LISTA PALABRAS */
+/* =========================================================
+   LISTA DE PALABRAS
+========================================================= */
 
 #words{
-width:300px;
+
+width:320px;
+
+max-height:690px;
+
 columns:2;
+
+column-gap:25px;
+
 background:rgba(0,0,0,0.25);
-padding:10px;
+
+padding:12px;
+
 border-radius:10px;
+
+backdrop-filter:blur(6px);
+
+overflow:hidden;
+
 }
 
 .word{
+
 margin:4px 0;
+
+font-size:14px;
+
+break-inside:avoid;
+
 }
 
 .foundWord{
+
 text-decoration:line-through;
+
 color:#22c55e;
+
 font-weight:bold;
+
 }
+
+/* =========================================================
+   RESULTADO
+========================================================= */
 
 #resultado{
+
 margin-top:10px;
-font-size:22px;
+
+font-size:20px;
+
 font-weight:bold;
+
 }
 
-
+/* =========================================================
+   VICTORIA
+========================================================= */
 
 .victoria{
+
 position:fixed;
+
 top:0;
 left:0;
+
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.6);
+
+background:rgba(0,0,0,0.65);
+
 display:flex;
+
 align-items:center;
+
 justify-content:center;
+
 opacity:0;
+
 pointer-events:none;
-transition:0.4s;
+
+transition:.4s;
+
+z-index:100;
+
 }
 
 .victoria.show{
+
 opacity:1;
+
 pointer-events:auto;
+
 }
 
 .victoriaCard{
+
 background:white;
+
 color:black;
+
 padding:40px;
+
 border-radius:15px;
+
 text-align:center;
+
 position:relative;
+
 overflow:hidden;
-animation:zoom 0.4s;
+
+min-width:320px;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.4);
+
+animation:zoom .4s;
+
 }
 
 @keyframes zoom{
-from{transform:scale(0.6)}
-to{transform:scale(1)}
+
+from{
+transform:scale(.6);
+}
+
+to{
+transform:scale(1);
+}
+
 }
 
 .victoriaCard h2{
+
 margin-bottom:10px;
+
+font-size:28px;
+
+}
+
+.victoriaCard p{
+
+font-size:18px;
+
 }
 
 .victoriaCard button{
+
 margin-top:15px;
+
 padding:10px 25px;
+
 border:none;
+
 border-radius:8px;
+
 background:#2563eb;
+
 color:white;
+
 font-size:16px;
+
 cursor:pointer;
-transition:0.2s;
+
+transition:.2s;
+
 }
 
 .victoriaCard button:hover{
+
 transform:scale(1.05);
+
 }
 
-/* FUEGOS */
+/* =========================================================
+   FUEGOS ARTIFICIALES
+========================================================= */
 
 .fire{
+
 position:absolute;
+
 width:8px;
+
 height:8px;
+
 border-radius:50%;
+
 pointer-events:none;
+
 animation:boom 1.6s forwards;
+
 }
 
 @keyframes boom{
 
 0%{
-transform:translate(0,0) scale(1);
+
+transform:
+translate(0,0)
+scale(1);
+
 opacity:1;
+
 }
 
 100%{
-transform:translate(var(--x),var(--y)) scale(0.2);
+
+transform:
+translate(var(--x),var(--y))
+scale(.2);
+
 opacity:0;
+
+}
+
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1100px){
+
+body{
+
+overflow:auto;
+
+justify-content:flex-start;
+
+padding:15px;
+
+}
+
+.container{
+
+flex-direction:column;
+
+align-items:center;
+
+}
+
+#words{
+
+width:650px;
+
+max-width:95vw;
+
 }
 
 }
 
 </style>
+
 </head>
 
 <body>
 
+<!-- =======================================================
+     FONDO ANIMADO
+======================================================== -->
+
 <canvas id="bubbles"></canvas>
 
+
+<!-- =======================================================
+     TÍTULO
+======================================================== -->
+
 <h1>🔎 Sopa de Letras</h1>
-<div id="timer">Tiempo: 0s</div>
+
+<div id="timer">
+
+Tiempo: 00:00:00
+
+</div>
+
+
+<!-- =======================================================
+     CONTENEDOR
+======================================================== -->
 
 <div class="container">
 
@@ -236,95 +521,221 @@ opacity:0;
 
 </div>
 
+
 <div id="resultado"></div>
+
 
 <script>
 
-/* ===== SONIDO CLICK ===== */
+/* =========================================================
+   SONIDO
+========================================================= */
 
 function playClick(){
 
-const audioCtx=new (window.AudioContext||window.webkitAudioContext)()
+try{
 
-const oscillator=audioCtx.createOscillator()
-const gain=audioCtx.createGain()
+const audioCtx =
+new(window.AudioContext ||
+window.webkitAudioContext)();
 
-oscillator.type="triangle"
-oscillator.frequency.value=600
+const oscillator =
+audioCtx.createOscillator();
 
-oscillator.connect(gain)
-gain.connect(audioCtx.destination)
+const gain =
+audioCtx.createGain();
 
-oscillator.start()
+oscillator.type="triangle";
+
+oscillator.frequency.value=600;
+
+oscillator.connect(gain);
+
+gain.connect(audioCtx.destination);
+
+gain.gain.setValueAtTime(
+0.08,
+audioCtx.currentTime
+);
 
 gain.gain.exponentialRampToValueAtTime(
 0.00001,
-audioCtx.currentTime+0.15
-)
+audioCtx.currentTime+.15
+);
+
+oscillator.start();
+
+oscillator.stop(
+audioCtx.currentTime+.15
+);
+
+}catch(error){
+
+console.log("Audio no disponible");
 
 }
 
-/* ===== BURBUJAS ===== */
+}
 
-const canvas=document.getElementById("bubbles")
-const ctx=canvas.getContext("2d")
 
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
+/* =========================================================
+   BURBUJAS
+========================================================= */
+
+const canvas =
+document.getElementById("bubbles");
+
+const ctx =
+canvas.getContext("2d");
+
+function ajustarCanvas(){
+
+canvas.width=window.innerWidth;
+
+canvas.height=window.innerHeight;
+
+}
+
+ajustarCanvas();
+
+window.addEventListener(
+"resize",
+ajustarCanvas
+);
+
 
 const colors=[
-"#60a5fa","#34d399","#fbbf24",
-"#f87171","#a78bfa","#22d3ee"
-]
 
-let bubbles=[]
+"#60a5fa",
+"#34d399",
+"#fbbf24",
+"#f87171",
+"#a78bfa",
+"#22d3ee"
+
+];
+
+
+let bubbles=[];
+
+
+function crearBurbujas(){
+
+bubbles=[];
 
 for(let i=0;i<30;i++){
 
 bubbles.push({
+
 x:Math.random()*canvas.width,
+
 y:Math.random()*canvas.height,
+
 r:20+Math.random()*35,
-dx:(Math.random()-0.5)*2,
-dy:(Math.random()-0.5)*2,
-color:colors[Math.floor(Math.random()*colors.length)]
-})
+
+dx:(Math.random()-.5)*2,
+
+dy:(Math.random()-.5)*2,
+
+color:
+colors[
+Math.floor(
+Math.random()*colors.length
+)
+]
+
+});
 
 }
+
+}
+
+crearBurbujas();
+
 
 function animate(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
 
 bubbles.forEach(b=>{
 
-b.x+=b.dx
-b.y+=b.dy
+b.x+=b.dx;
 
-if(b.x+b.r>canvas.width||b.x-b.r<0) b.dx*=-1
-if(b.y+b.r>canvas.height||b.y-b.r<0) b.dy*=-1
+b.y+=b.dy;
 
-ctx.beginPath()
-ctx.arc(b.x,b.y,b.r,0,Math.PI*2)
-ctx.fillStyle=b.color
-ctx.globalAlpha=0.18
-ctx.fill()
 
-})
+if(
+b.x+b.r>canvas.width ||
+b.x-b.r<0
+){
 
-requestAnimationFrame(animate)
+b.dx*=-1;
 
 }
 
-animate()
 
-/* ===== SOPA DE LETRAS ===== */
+if(
+b.y+b.r>canvas.height ||
+b.y-b.r<0
+){
 
-function limpiar(t){
-return t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase()
+b.dy*=-1;
+
 }
+
+
+ctx.beginPath();
+
+ctx.arc(
+b.x,
+b.y,
+b.r,
+0,
+Math.PI*2
+);
+
+ctx.fillStyle=b.color;
+
+ctx.globalAlpha=.18;
+
+ctx.fill();
+
+});
+
+ctx.globalAlpha=1;
+
+requestAnimationFrame(animate);
+
+}
+
+animate();
+
+
+/* =========================================================
+   LIMPIAR ACENTOS
+========================================================= */
+
+function limpiar(texto){
+
+return texto
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"")
+.toUpperCase();
+
+}
+
+
+/* =========================================================
+   LISTA DE PALABRAS
+========================================================= */
 
 const palabrasOriginales=[
+
 "internet",
 "direccionip",
 "ipv4",
@@ -365,7 +776,7 @@ const palabrasOriginales=[
 "pop3",
 "imap",
 "paquetededatos",
-"anchodabanda",
+"anchodebanda",
 "latencia",
 "ping",
 "traceroute",
@@ -403,153 +814,1208 @@ const palabrasOriginales=[
 "proveedordeinternet",
 "isp",
 "conexion"
+
 ];
 
-// MEZCLAR PALABRAS
+
+/* =========================================================
+   CONFIGURACIÓN DEL JUEGO
+========================================================= */
+
+const size=20;
+
+/*
+   Cantidad de palabras que aparecerán.
+
+   La lista tiene aproximadamente 80 palabras.
+   40 = aproximadamente la mitad.
+*/
+
+const CANTIDAD_PALABRAS=40;
+
+
+/* =========================================================
+   DIRECCIONES
+
+   8 direcciones:
+   derecha
+   izquierda
+   abajo
+   arriba
+   diagonales
+========================================================= */
+
+const dirs=[
+
+[0,1],
+[0,-1],
+
+[1,0],
+[-1,0],
+
+[1,1],
+[-1,-1],
+
+[1,-1],
+[-1,1]
+
+];
+
+
+/* =========================================================
+   MEZCLAR ARRAY
+========================================================= */
+
 function mezclar(array){
-return array.sort(()=>Math.random()-0.5)
+
+let copia=[...array];
+
+for(
+let i=copia.length-1;
+i>0;
+i--
+){
+
+let j=
+Math.floor(
+Math.random()*(i+1)
+);
+
+[
+copia[i],
+copia[j]
+]=[
+copia[j],
+copia[i]
+];
+
 }
 
-// TOMAR LA MITAD
-const palabrasSeleccionadas = mezclar([...palabrasOriginales])
-.slice(0, Math.floor(palabrasOriginales.length / 2))
+return copia;
 
-// LIMPIAR PALABRAS
-const palabras = palabrasSeleccionadas.map(p=>limpiar(p))
+}
 
-const size=20
-const grid=[]
-const gridElement=document.getElementById("grid")
 
-let time=0
+/* =========================================================
+   SELECCIONAR PALABRAS
+========================================================= */
+
+const palabrasSeleccionadas=
+mezclar(palabrasOriginales)
+.slice(
+0,
+Math.min(
+CANTIDAD_PALABRAS,
+palabrasOriginales.length
+)
+);
+
+
+/* =========================================================
+   PALABRAS LIMPIAS
+========================================================= */
+
+const palabras=
+palabrasSeleccionadas.map(
+p=>limpiar(p)
+);
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+const gridElement=
+document.getElementById("grid");
+
+const wordsDiv=
+document.getElementById("words");
+
+
+let grid=[];
+
+let palabrasColocadas=[];
+
+
+/* =========================================================
+   CREAR TABLERO VACÍO
+========================================================= */
+
+function crearGrid(){
+
+grid=[];
+
+for(let r=0;r<size;r++){
+
+grid[r]=[];
+
+for(let c=0;c<size;c++){
+
+grid[r][c]="";
+
+}
+
+}
+
+}
+
+
+/* =========================================================
+   COLOCAR UNA PALABRA
+
+   IMPORTANTE:
+
+   Las palabras pueden cruzarse.
+
+   Si una casilla ya tiene la misma letra,
+   se permite compartirla.
+
+========================================================= */
+
+function intentarColocarPalabra(
+word,
+cantidadIntentos=500
+){
+
+for(
+let intento=0;
+intento<cantidadIntentos;
+intento++
+){
+
+const dir=
+dirs[
+Math.floor(
+Math.random()*dirs.length
+)
+];
+
+const row=
+Math.floor(
+Math.random()*size
+);
+
+const col=
+Math.floor(
+Math.random()*size
+);
+
+
+let posiciones=[];
+
+let puede=true;
+
+
+for(
+let i=0;
+i<word.length;
+i++
+){
+
+const r=
+row+dir[0]*i;
+
+const c=
+col+dir[1]*i;
+
+
+if(
+r<0 ||
+c<0 ||
+r>=size ||
+c>=size
+){
+
+puede=false;
+
+break;
+
+}
+
+
+/*
+   Se permite cruzar únicamente
+   si la letra coincide.
+*/
+
+if(
+grid[r][c]!=="" &&
+grid[r][c]!==word[i]
+){
+
+puede=false;
+
+break;
+
+}
+
+posiciones.push([r,c]);
+
+}
+
+
+if(!puede){
+
+continue;
+
+}
+
+
+/*
+   Colocar palabra
+*/
+
+posiciones.forEach(
+([r,c],i)=>{
+
+grid[r][c]=word[i];
+
+}
+);
+
+return true;
+
+}
+
+return false;
+
+}
+
+
+/* =========================================================
+   GENERAR SOPA
+
+   Se intenta generar una sopa completa.
+
+   Si alguna palabra no entra,
+   se vuelve a generar todo.
+
+========================================================= */
+
+function generarSopa(){
+
+const MAX_GENERACIONES=300;
+
+
+/*
+   Primero ordenar por longitud.
+
+   Las palabras largas entran primero,
+   lo que facilita muchísimo la generación.
+*/
+
+const ordenadas=
+[...palabras].sort(
+(a,b)=>b.length-a.length
+);
+
+
+for(
+let generacion=0;
+generacion<MAX_GENERACIONES;
+generacion++
+){
+
+crearGrid();
+
+let colocadas=[];
+
+let correcto=true;
+
+
+/*
+   Intentar colocar todas
+*/
+
+for(
+const palabra of ordenadas
+){
+
+if(
+intentarColocarPalabra(
+palabra,
+1000
+)
+){
+
+colocadas.push(palabra);
+
+}else{
+
+correcto=false;
+
+break;
+
+}
+
+}
+
+
+/*
+   Si TODAS entraron,
+   terminamos.
+*/
+
+if(
+correcto &&
+colocadas.length===palabras.length
+){
+
+palabrasColocadas=
+colocadas;
+
+return true;
+
+}
+
+}
+
+
+/*
+   Si llega aquí es porque no pudo.
+*/
+
+console.error(
+"No se pudo generar una sopa completa."
+);
+
+return false;
+
+}
+
+
+/* =========================================================
+   GENERAR SOPA
+========================================================= */
+
+const sopaGenerada=
+generarSopa();
+
+
+/*
+   Protección de seguridad.
+*/
+
+if(!sopaGenerada){
+
+alert(
+"No se pudo generar la sopa. Recarga la página."
+);
+
+}
+
+
+/* =========================================================
+   RELLENAR ESPACIOS VACÍOS
+========================================================= */
+
+const letras=
+"ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+
+
+for(let r=0;r<size;r++){
+
+for(let c=0;c<size;c++){
+
+if(grid[r][c]===""){
+
+grid[r][c]=
+letras[
+Math.floor(
+Math.random()*letras.length
+)
+];
+
+}
+
+}
+
+}
+
+
+/* =========================================================
+   CREAR TABLERO VISUAL
+========================================================= */
+
+function crearTablero(){
+
+gridElement.innerHTML="";
+
+
+for(let r=0;r<size;r++){
+
+for(let c=0;c<size;c++){
+
+const cell=
+document.createElement("div");
+
+cell.className="cell";
+
+cell.innerText=
+grid[r][c];
+
+cell.dataset.row=r;
+
+cell.dataset.col=c;
+
+gridElement.appendChild(cell);
+
+}
+
+}
+
+}
+
+crearTablero();
+
+
+/* =========================================================
+   CREAR LISTA DE PALABRAS
+========================================================= */
+
+function crearLista(){
+
+wordsDiv.innerHTML="";
+
+
+/*
+   Ordenamos alfabéticamente solamente
+   para que sea más fácil buscar.
+*/
+
+const lista=
+[...palabrasColocadas].sort();
+
+
+lista.forEach(p=>{
+
+const original=
+palabrasOriginales.find(
+w=>limpiar(w)===p
+);
+
+
+const d=
+document.createElement("div");
+
+d.className="word";
+
+d.id="w_"+p;
+
+d.innerText=
+original || p;
+
+wordsDiv.appendChild(d);
+
+});
+
+}
+
+crearLista();
+
+
+/* =========================================================
+   CRONÓMETRO
+========================================================= */
+
+let time=0;
+
 let timer=setInterval(()=>{
-time++
-document.getElementById("timer").innerText="Tiempo: "+formatearTiempo(time)
-},1000)
 
-/* GRID VACIO */
+time++;
 
-for(let r=0;r<size;r++){
-grid[r]=[]
-for(let c=0;c<size;c++) grid[r][c]=""
-}
+document.getElementById(
+"timer"
+).innerText=
+"Tiempo: "+formatearTiempo(time);
 
-const dirs=[[0,1],[1,0],[1,1],[-1,1]]
+},1000);
 
-function placeWord(word){
 
-let attempts=0
+/* =========================================================
+   FORMATEAR TIEMPO
+========================================================= */
 
-while(attempts<200){
+function formatearTiempo(seg){
 
-let dir=dirs[Math.floor(Math.random()*dirs.length)]
-let row=Math.floor(Math.random()*size)
-let col=Math.floor(Math.random()*size)
+const horas=
+Math.floor(seg/3600);
 
-let fits=true
+const minutos=
+Math.floor(
+(seg%3600)/60
+);
 
-for(let i=0;i<word.length;i++){
+const segundos=
+seg%60;
 
-let r=row+dir[0]*i
-let c=col+dir[1]*i
 
-if(r<0||c<0||r>=size||c>=size||grid[r][c]!=""){
-fits=false
-break
-}
+return(
 
-}
+String(horas).padStart(2,"0")+
+":"+
+String(minutos).padStart(2,"0")+
+":"+
+String(segundos).padStart(2,"0")
 
-if(fits){
-
-for(let i=0;i<word.length;i++){
-
-let r=row+dir[0]*i
-let c=col+dir[1]*i
-
-grid[r][c]=word[i]
+);
 
 }
 
-return true
-}
+/* =========================================================
+   SELECCIÓN DE PALABRAS
+   MANTENER CLIC + ARRASTRAR + SOLTAR
+========================================================= */
 
-attempts++
+let selecting = false;
+let selected = [];
 
-}
 
-return false
-}
+/* =========================================================
+   OBTENER TODAS LAS CELDAS
+========================================================= */
 
-/* 🔥 SOLO GUARDAR LAS QUE SI ENTRAN */
-let palabrasColocadas = []
+function getCells(){
 
-palabras.forEach(p=>{
-if(placeWord(p)){
-palabrasColocadas.push(p)
-}
-})
-
-/* RELLENO */
-
-const letras="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
-
-for(let r=0;r<size;r++){
-for(let c=0;c<size;c++){
-
-if(grid[r][c]==""){
-grid[r][c]=letras[Math.floor(Math.random()*letras.length)]
-}
+    return [...document.querySelectorAll(".cell")];
 
 }
+
+
+/* =========================================================
+   OBTENER POSICIÓN DE UNA CELDA
+========================================================= */
+
+function getCellPosition(cell){
+
+    return {
+        row: Number(cell.dataset.row),
+        col: Number(cell.dataset.col)
+    };
+
 }
 
-/* CREAR GRID */
 
-for(let r=0;r<size;r++){
-for(let c=0;c<size;c++){
+/* =========================================================
+   CALCULAR LÍNEA ENTRE DOS CELDAS
+========================================================= */
 
-let cell=document.createElement("div")
-cell.className="cell"
-cell.innerText=grid[r][c]
+function calcularLinea(first, current){
 
-gridElement.appendChild(cell)
+    const f = getCellPosition(first);
+    const c = getCellPosition(current);
+
+    let dr = c.row - f.row;
+    let dc = c.col - f.col;
+
+
+    /* Si es la misma casilla */
+
+    if(dr === 0 && dc === 0){
+
+        return [first];
+
+    }
+
+
+    /*
+       Convertimos la diferencia
+       en dirección: -1, 0 o 1
+    */
+
+    if(dr !== 0){
+
+        dr = dr / Math.abs(dr);
+
+    }
+
+    if(dc !== 0){
+
+        dc = dc / Math.abs(dc);
+
+    }
+
+
+    /*
+       Solo permitimos:
+
+       Horizontal
+       Vertical
+       Diagonal
+    */
+
+    const diferenciaFilas =
+        Math.abs(c.row - f.row);
+
+    const diferenciaColumnas =
+        Math.abs(c.col - f.col);
+
+
+    /*
+       Si no es horizontal, vertical
+       o diagonal, no seleccionamos.
+    */
+
+    if(
+        dr !== 0 &&
+        dc !== 0 &&
+        diferenciaFilas !== diferenciaColumnas
+    ){
+
+        return [];
+
+    }
+
+
+    /*
+       Cantidad de casillas
+    */
+
+    const distancia = Math.max(
+        diferenciaFilas,
+        diferenciaColumnas
+    );
+
+
+    const cells = getCells();
+
+    let resultado = [];
+
+
+    for(let i = 0; i <= distancia; i++){
+
+        const row = f.row + dr * i;
+        const col = f.col + dc * i;
+
+
+        const cell = cells.find(celda =>
+            Number(celda.dataset.row) === row &&
+            Number(celda.dataset.col) === col
+        );
+
+
+        if(cell){
+
+            resultado.push(cell);
+
+        }
+
+    }
+
+
+    return resultado;
 
 }
+
+
+/* =========================================================
+   QUITAR SELECCIÓN TEMPORAL
+========================================================= */
+
+function limpiarSeleccion(){
+
+    selected.forEach(cell => {
+
+        if(!cell.classList.contains("found")){
+
+            cell.classList.remove("selected");
+
+        }
+
+    });
+
 }
 
-/* 🔥 LISTA SOLO DE PALABRAS COLOCADAS */
 
-const wordsDiv=document.getElementById("words")
+/* =========================================================
+   INICIAR SELECCIÓN
+   MANTENER CLIC PRESIONADO
+========================================================= */
 
-palabrasColocadas.forEach(p=>{
+gridElement.addEventListener("mousedown", function(e){
 
-let original = palabrasOriginales.find(w=>limpiar(w)===p)
+    if(!e.target.classList.contains("cell")){
 
-let d=document.createElement("div")
-d.className="word"
-d.id="w_"+p
-d.innerText=original
+        return;
 
-wordsDiv.appendChild(d)
+    }
 
-})
+
+    /*
+       Solo clic izquierdo
+    */
+
+    if(e.button !== 0){
+
+        return;
+
+    }
+
+
+    e.preventDefault();
+
+
+    selecting = true;
+
+
+    /*
+       Limpiar selección anterior
+    */
+
+    limpiarSeleccion();
+
+
+    /*
+       La primera letra
+    */
+
+    selected = [e.target];
+
+
+    e.target.classList.add("selected");
+
+});
+
+
+/* =========================================================
+   ARRASTRAR SOBRE LAS LETRAS
+========================================================= */
+
+gridElement.addEventListener("mouseover", function(e){
+
+    if(!selecting){
+
+        return;
+
+    }
+
+
+    if(!e.target.classList.contains("cell")){
+
+        return;
+
+    }
+
+
+    /*
+       Primera letra
+    */
+
+    const first = selected[0];
+
+
+    /*
+       Calcular línea desde la primera
+       letra hasta donde está el mouse
+    */
+
+    const linea = calcularLinea(
+        first,
+        e.target
+    );
+
+
+    /*
+       Si no es una línea válida,
+       no hacemos nada
+    */
+
+    if(linea.length === 0){
+
+        return;
+
+    }
+
+
+    /*
+       Quitar selección anterior
+    */
+
+    limpiarSeleccion();
+
+
+    /*
+       Guardar nueva selección
+    */
+
+    selected = linea;
+
+
+    /*
+       Pintar las letras seleccionadas
+    */
+
+    selected.forEach(cell => {
+
+        if(!cell.classList.contains("found")){
+
+            cell.classList.add("selected");
+
+        }
+
+    });
+
+});
+
+
+/* =========================================================
+   SOLTAR EL CLIC
+========================================================= */
+
+document.addEventListener("mouseup", function(){
+
+    if(!selecting){
+
+        return;
+
+    }
+
+
+    /*
+       Terminamos el arrastre
+    */
+
+    selecting = false;
+
+
+    /*
+       Comprobar si lo seleccionado
+       corresponde a una palabra
+    */
+
+    checkWord();
+
+});
+
+
+/* =========================================================
+   COLORES
+========================================================= */
+
+const colorsWord = [
+
+    "#ef4444",
+    "#3b82f6",
+    "#22c55e",
+    "#eab308",
+    "#a855f7",
+    "#06b6d4",
+    "#f97316",
+    "#ec4899"
+
+];
+
+
+let found = [];
+
+
+/* =========================================================
+   COMPROBAR PALABRA
+========================================================= */
+
+function checkWord(){
+
+    if(selected.length === 0){
+
+        return;
+
+    }
+
+
+    /*
+       Convertir las letras seleccionadas
+       en una palabra
+    */
+
+    const word = selected
+        .map(cell => cell.innerText)
+        .join("");
+
+
+    /*
+       También comprobamos al revés
+    */
+
+    const reverse = word
+        .split("")
+        .reverse()
+        .join("");
+
+
+    let encontrada = null;
+
+
+    /*
+       Buscar coincidencia
+    */
+
+    for(const p of palabrasColocadas){
+
+        if(
+            (word === p || reverse === p) &&
+            !found.includes(p)
+        ){
+
+            encontrada = p;
+
+            break;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SI ENCONTRÓ UNA PALABRA
+    ===================================================== */
+
+    if(encontrada){
+
+        found.push(encontrada);
+
+
+        /*
+           Elegir color
+        */
+
+        const color =
+            colorsWord[
+                Math.floor(
+                    Math.random() *
+                    colorsWord.length
+                )
+            ];
+
+
+        /*
+           Colorear las letras
+        */
+
+        selected.forEach(cell => {
+
+            cell.style.background = color;
+
+            cell.classList.remove("selected");
+
+            cell.classList.add("found");
+
+        });
+
+
+        /*
+           Tacharla de la lista
+        */
+
+        const elemento =
+            document.getElementById(
+                "w_" + encontrada
+            );
+
+
+        if(elemento){
+
+            elemento.classList.add("foundWord");
+
+        }
+
+
+        /*
+           Mostrar progreso
+        */
+
+        document.getElementById(
+            "resultado"
+        ).innerText =
+            "Encontradas: " +
+            found.length +
+            " / " +
+            palabrasColocadas.length;
+
+
+        /*
+           Sonido
+        */
+
+        playClick();
+
+
+        /*
+           ¿Terminó?
+        */
+
+        if(
+            found.length ===
+            palabrasColocadas.length
+        ){
+
+            clearInterval(timer);
+
+            mostrarVictoria();
+
+        }
+
+    }
+
+
+    /*
+       Quitar selección temporal
+    */
+
+    limpiarSeleccion();
+
+    selected = [];
+
+}
+
+
+/* =========================================================
+   VICTORIA
+========================================================= */
+
+function mostrarVictoria(){
+
+document.getElementById(
+"tiempoFinal"
+).innerText=
+"Tiempo total: "+
+formatearTiempo(time);
+
+
+const modal=
+document.getElementById(
+"victoria"
+);
+
+
+modal.classList.add("show");
+
+
+fuegos();
+
+}
+
+
+/* =========================================================
+   FUEGOS ARTIFICIALES
+========================================================= */
+
+function fuegos(){
+
+const contenedor=
+document.getElementById(
+"fireworks"
+);
+
+
+const colores=[
+
+"#ff3838",
+"#ffd32a",
+"#18dcff",
+"#7d5fff",
+"#2ed573",
+"#ff9f1a",
+"#ff6bcb"
+
+];
+
+
+for(
+let i=0;
+i<180;
+i++
+){
+
+const f=
+document.createElement("div");
+
+
+f.className="fire";
+
+
+f.style.background=
+colores[
+Math.floor(
+Math.random()*colores.length
+)
+];
+
+
+f.style.left="50%";
+
+f.style.top="50%";
+
+
+f.style.setProperty(
+"--x",
+(
+Math.random()*700-350
+)+"px"
+);
+
+
+f.style.setProperty(
+"--y",
+(
+Math.random()*700-350
+)+"px"
+);
+
+
+contenedor.appendChild(f);
+
+
+setTimeout(
+()=>f.remove(),
+1600
+);
+
+}
+
+}
+
+
+/* =========================================================
+   REINICIAR
+========================================================= */
+
+function reiniciar(){
+
+location.reload();
+
+}
 
 </script>
-<div id="victoria" class="victoria">
+
+
+<!-- =======================================================
+     MODAL DE VICTORIA
+======================================================== -->
+
+<div
+id="victoria"
+class="victoria"
+>
 
 <div class="victoriaCard">
 
-<h2>🎉 ¡Terminaste!</h2>
+<h2>
+🎉 ¡Terminaste!
+</h2>
 
 <p id="tiempoFinal"></p>
 
-<button onclick="reiniciar()">Volver a intentar</button>
+<button onclick="reiniciar()">
+Volver a intentar
+</button>
 
 <div id="fireworks"></div>
 
 </div>
 
 </div>
+
+
 </body>
+
 </html>
