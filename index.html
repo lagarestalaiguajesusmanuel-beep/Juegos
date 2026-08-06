@@ -325,10 +325,97 @@ return t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase()
 }
 
 const palabrasOriginales=[
-"base","datos","tabla","campo","registro","fila","columna","consulta","sql","oracle","servidor","cliente","información","gestor","motor","índice","clave","llave","primaria","foránea","relación","entidad","atributo","modelo","diagrama","estructura","dominio","dato","texto","número","fecha","booleano","búsqueda","insertar","eliminar","actualizar","seleccionar","usuario","permisos","seguridad","acceso","conexión","servidor","cliente","backup","restaurar","restricción","normalización","primeraforma","segundaforma","terceraforma","cardinalidad","dependencia","relacional","documento","Colección","Nodo","Distribuido","Replicación","escalabilidad","bigdata","almacenamiento","estructurado","noestructurado","metadato","archivo","carpeta","plataforma","aplicación","tecnología"
-]
+"internet",
+"direccionip",
+"ipv4",
+"ipv6",
+"dominio",
+"dns",
+"url",
+"http",
+"https",
+"tcp",
+"udp",
+"tcpip",
+"router",
+"modem",
+"switch",
+"wifi",
+"ethernet",
+"red",
+"lan",
+"wan",
+"man",
+"servidor",
+"cliente",
+"navegador",
+"paginaweb",
+"sitioweb",
+"hosting",
+"subdominio",
+"puertodered",
+"gateway",
+"mascaradered",
+"dhcp",
+"firewall",
+"vpn",
+"proxy",
+"correoelectronico",
+"smtp",
+"pop3",
+"imap",
+"paquetededatos",
+"anchodabanda",
+"latencia",
+"ping",
+"traceroute",
+"dnssec",
+"cookie",
+"cache",
+"streaming",
+"cloudcomputing",
+"ciberseguridad",
+"phishing",
+"malware",
+"spam",
+"ftp",
+"sftp",
+"ssh",
+"ssl",
+"tls",
+"certificadodigital",
+"nube",
+"datacenter",
+"api",
+"cdn",
+"intranet",
+"extranet",
+"packetloss",
+"socket",
+"websocket",
+"html",
+"javascript",
+"internetdelascosas",
+"iot",
+"redesocial",
+"buscador",
+"servidorweb",
+"proveedordeinternet",
+"isp",
+"conexion"
+];
 
-const palabras=palabrasOriginales.map(p=>limpiar(p))
+// MEZCLAR PALABRAS
+function mezclar(array){
+return array.sort(()=>Math.random()-0.5)
+}
+
+// TOMAR LA MITAD
+const palabrasSeleccionadas = mezclar([...palabrasOriginales])
+.slice(0, Math.floor(palabrasOriginales.length / 2))
+
+// LIMPIAR PALABRAS
+const palabras = palabrasSeleccionadas.map(p=>limpiar(p))
 
 const size=20
 const grid=[]
@@ -384,16 +471,24 @@ grid[r][c]=word[i]
 
 }
 
-return
+return true
 }
 
 attempts++
 
 }
 
+return false
 }
 
-palabras.forEach(placeWord)
+/* 🔥 SOLO GUARDAR LAS QUE SI ENTRAN */
+let palabrasColocadas = []
+
+palabras.forEach(p=>{
+if(placeWord(p)){
+palabrasColocadas.push(p)
+}
+})
 
 /* RELLENO */
 
@@ -423,223 +518,22 @@ gridElement.appendChild(cell)
 }
 }
 
-/* LISTA PALABRAS */
+/* 🔥 LISTA SOLO DE PALABRAS COLOCADAS */
 
 const wordsDiv=document.getElementById("words")
 
-palabrasOriginales.forEach((w,i)=>{
+palabrasColocadas.forEach(p=>{
+
+let original = palabrasOriginales.find(w=>limpiar(w)===p)
 
 let d=document.createElement("div")
 d.className="word"
-d.id="w_"+palabras[i]
-d.innerText=w
+d.id="w_"+p
+d.innerText=original
 
 wordsDiv.appendChild(d)
 
 })
-
-/* SELECCION */
-
-let selecting=false
-let selected=[]
-let direction=null
-
-gridElement.addEventListener("mousedown",e=>{
-if(e.target.classList.contains("cell")){
-
-selecting=true
-selected=[e.target]
-direction=null
-
-e.target.classList.add("selected")
-
-}
-})
-
-gridElement.addEventListener("mouseover",e=>{
-
-if(!selecting) return
-if(!e.target.classList.contains("cell")) return
-
-const cells=[...document.querySelectorAll(".cell")]
-
-const getPos=(cell)=>{
-const index=cells.indexOf(cell)
-return {
-row:Math.floor(index/size),
-col:index%size
-}
-}
-
-const first=getPos(selected[0])
-const current=getPos(e.target)
-
-let dr=current.row-first.row
-let dc=current.col-first.col
-
-if(selected.length===1){
-
-if(dr!==0) dr=dr/Math.abs(dr)
-if(dc!==0) dc=dc/Math.abs(dc)
-
-direction=[dr,dc]
-
-}else{
-
-const prev=getPos(selected[selected.length-1])
-
-if(
-current.row-prev.row!==direction[0] ||
-current.col-prev.col!==direction[1]
-){
-return
-}
-
-}
-
-if(!selected.includes(e.target)){
-
-selected.push(e.target)
-e.target.classList.add("selected")
-
-}
-
-})
-
-document.addEventListener("mouseup",()=>{
-selecting=false
-direction=null
-checkWord()
-})
-
-const colorsWord=[
-"#ef4444","#3b82f6","#22c55e",
-"#eab308","#a855f7","#06b6d4","#f97316"
-]
-
-let found=[]
-
-function checkWord(){
-
-let word=selected.map(c=>c.innerText).join("")
-let reverse=word.split("").reverse().join("")
-
-palabras.forEach(p=>{
-
-if((word==p||reverse==p)&&!found.includes(p)){
-
-found.push(p)
-
-let color=colorsWord[Math.floor(Math.random()*colorsWord.length)]
-
-selected.forEach(c=>{
-c.style.background=color
-c.classList.remove("selected")
-c.classList.add("found")
-})
-
-document.getElementById("w_"+p).classList.add("foundWord")
-
-playClick()
-
-if(found.length==palabras.length){
-
-clearInterval(timer)
-
-mostrarVictoria()
-
-}
-
-selected=[]
-
-}
-
-})
-
-selected.forEach(c=>{
-if(!c.classList.contains("found")){
-c.classList.remove("selected")
-}
-})
-
-selected=[]
-
-
-
-
-
-}
-
-
-function mostrarVictoria(){
-
-document.getElementById("tiempoFinal").innerText=
-"Tiempo total: "+formatearTiempo(time)
-
-const modal=document.getElementById("victoria")
-
-modal.classList.add("show")
-
-fuegos()
-
-}
-
-/* FUEGOS ARTIFICIALES */
-
-function fuegos(){
-
-const contenedor=document.getElementById("fireworks")
-
-const colores=[
-"#ff3838","#ffd32a","#18dcff",
-"#7d5fff","#2ed573","#ff9f1a"
-]
-
-for(let i=0;i<150;i++){
-
-let f=document.createElement("div")
-
-f.className="fire"
-
-f.style.background=
-colores[Math.floor(Math.random()*colores.length)]
-
-f.style.left="50%"
-f.style.top="50%"
-
-f.style.setProperty("--x",(Math.random()*600-300)+"px")
-f.style.setProperty("--y",(Math.random()*600-300)+"px")
-
-contenedor.appendChild(f)
-
-setTimeout(()=>f.remove(),1600)
-
-}
-
-}
-
-/* REINICIAR */
-
-function reiniciar(){
-
-location.reload()
-
-}
-
-function formatearTiempo(seg){
-
-let horas=Math.floor(seg/3600)
-let minutos=Math.floor((seg%3600)/60)
-let segundos=seg%60
-
-return (
-String(horas).padStart(2,"0")+":"+
-String(minutos).padStart(2,"0")+":"+
-String(segundos).padStart(2,"0")
-)
-
-}
-
 
 </script>
 <div id="victoria" class="victoria">
